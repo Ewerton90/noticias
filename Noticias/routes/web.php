@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NoticiaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::resources([
+	"noticias" => NoticiaController::Class
+]);
+
 Route::get('/', function () {
-    return view('welcome');
+    return redirect("/noticias");
 });
