@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Noticia;
+use App\Models\Imagem;
+use Illuminate\Support\Facades\Storage;
 
-class NoticiaController extends Controller
+class ImagemController extends Controller
 {
-	public function __construct(){
-			$this->middleware("auth");
-	}
     /**
      * Display a listing of the resource.
      *
@@ -18,12 +15,7 @@ class NoticiaController extends Controller
      */
     public function index()
     {
-		$noticia = new Noticia();
-		$noticias = Noticia::All();
-        return view("noticias.index", [
-			"noticia" => $noticia,
-			"noticias" => $noticias
-		]);
+        //
     }
 
     /**
@@ -44,18 +36,16 @@ class NoticiaController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request->get("id") != ""){
-			$noticia = Noticia::Find($request->get("id"));
-		}else{
-			$noticia = new Noticia();
-		}
-		$noticia->titulo = $request->get("titulo");
-		$noticia->subtitulo = $request->get("subtitulo");
-		$noticia->texto = $request->get("texto");
-		$noticia->usuario = Auth::id();
-		$noticia->save();
-		$request->session()->flash("status", "salvo com sucesso");
-		return redirect("/noticias");		
+        $imagem = new Imagem();
+		$imagem->noticia = $request->get("noticia");
+		$url = $request->file("url")->store("public/noticias");
+		$url = str_replace("public/", "storage/", $url);
+		$imagem->url = $url;
+		$imagem->save();
+		
+		$request->session()->flash("status", "salvo");
+		
+		return redirect("/imagens/" . $request->get("noticia"));
     }
 
     /**
@@ -66,7 +56,11 @@ class NoticiaController extends Controller
      */
     public function show($id)
     {
-        //
+		$imagens = Imagem::Where("noticia", "=", $id)->get();
+        return view("imagem.index",[
+			"noticia" => $id,
+			"imagens" => $imagens
+		]);
     }
 
     /**
@@ -77,12 +71,7 @@ class NoticiaController extends Controller
      */
     public function edit($id)
     {
-        $noticia = Noticia::Find($id);
-		$noticias = Noticia::All();
-        return view("noticias.index", [
-			"noticia" => $noticia,
-			"noticias" => $noticias
-		]);
+        //
     }
 
     /**
@@ -105,8 +94,16 @@ class NoticiaController extends Controller
      */
     public function destroy($id, Request $request)
     {
-        Noticia::Destroy($id);
-		$request->session()->flash("status", "excluido com sucesso");
-		return Redirect("/noticias");
+        $imagem = Imagem::Find($id);
+		$url = $imagem->url;
+		$url = str_replace("storage/", "public/", $url);
+		$noticia = $imagem->noticia;
+		$imagem->delete();
+		
+		Storage::delete($url);
+		
+		$request->session()->flash("status", "excluido");
+		
+		return redirect("/imagens/" . $request->get("noticia"));
     }
 }

@@ -57,7 +57,7 @@
                 </div>
             </td>
             <td class="align-middle text-center">
-                <span class="btn bg-gradient-success">Imagens</span>
+                <a href="/imagens/{{$noticias->id}}" class="btn bg-gradient-success imagem">Imagens</a>
             </td>
             <td class="align-middle text-center">
                 <button class="btn bg-gradient-warning" type="button" onclick="location.href='/noticias/{{$noticia->id}}/edit';">Editar</button>
@@ -74,3 +74,13 @@
 	</tbody>
 </table>
 @endsection
+
+<script>
+	window.addEventListener("load", function(){
+		$(document).ready(function() {
+			$('.imagem').magnificPopup({
+				type: 'iframe'
+			});
+		});
+	});
+</script>

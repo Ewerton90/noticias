@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Noticia;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
-class NoticiaController extends Controller
+class UserController extends Controller
 {
 	public function __construct(){
 			$this->middleware("auth");
@@ -18,11 +18,11 @@ class NoticiaController extends Controller
      */
     public function index()
     {
-		$noticia = new Noticia();
-		$noticias = Noticia::All();
-        return view("noticias.index", [
-			"noticia" => $noticia,
-			"noticias" => $noticias
+        $usuario = new User();
+		$usuarios = User::All();
+		return view("usuarios.index", [
+			"usuario" => $usuario,
+			"usuarios" => $usuarios
 		]);
     }
 
@@ -44,18 +44,17 @@ class NoticiaController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request->get("id") != ""){
-			$noticia = Noticia::Find($request->get("id"));
+        if($request->get("id") != ""){
+			$usuario = User::Find($request->get("id"));
 		}else{
-			$noticia = new Noticia();
+			$usuario = new User(); 
 		}
-		$noticia->titulo = $request->get("titulo");
-		$noticia->subtitulo = $request->get("subtitulo");
-		$noticia->texto = $request->get("texto");
-		$noticia->usuario = Auth::id();
-		$noticia->save();
-		$request->session()->flash("status", "salvo com sucesso");
-		return redirect("/noticias");		
+		$usuario->name = $request->get("nome");
+		$usuario->email = $request->get("email");
+		$usuario->password = Hash::make ($request->get("password"));
+		$usuario->Save();
+		$request->Session()->Flash("status", "salvo");
+		return redirect("/usuarios");
     }
 
     /**
@@ -77,11 +76,11 @@ class NoticiaController extends Controller
      */
     public function edit($id)
     {
-        $noticia = Noticia::Find($id);
-		$noticias = Noticia::All();
-        return view("noticias.index", [
-			"noticia" => $noticia,
-			"noticias" => $noticias
+        $usuario = User::Find($id);
+		$usuarios = User::All();
+		return view("usuarios.index", [
+			"usuario" => $usuario,
+			"usuarios" => $usuarios
 		]);
     }
 
@@ -105,8 +104,8 @@ class NoticiaController extends Controller
      */
     public function destroy($id, Request $request)
     {
-        Noticia::Destroy($id);
-		$request->session()->flash("status", "excluido com sucesso");
-		return Redirect("/noticias");
+        Usuario::Destroy($id);
+		$request->Session()->Flash("status", "excluido");
+		return redirect("/usuarios");
     }
 }
