@@ -3,7 +3,7 @@
 <style>
 	.carousel-inner img{
 		width:80%;
-		height:80p%;
+		height:80%;
 	}
 </style>
 @section("noticias")
@@ -70,6 +70,27 @@
         </div> <!-- end card -->
 	
 	@endforeach
+	
+	<div class="card">
+		<div class="content" style="text-align:center;">
+			@if(!($noticias->onFirstPage()))
+				<a href="{{$noticias->previousPageUrl()}}" class="btn"><<Anterior</a>
+			@endif
+			
+			@for($i = 1; $i <= $noticias->lastPage(); $i++)
+				@if($i == $noticias->currentPage())
+					<a href="{{$noticias->url($i)}}" class="btn" style="background-color: #888888!important;">{{$i}}</a>
+				@else
+				<a href="{{$noticias->url($i)}}" class="btn">{{$i}}</a>
+				@endif
+			@endfor
+			
+			@if($noticias->hasMorePages())
+				<a href="{{$noticias->nextPageUrl()}}" class="btn">Próximo>></a>
+			@endif
+		</div>
+	</div>
+	
 	<script>
 		window.addEventListener("load", function() {
 			$('.carousel').carousel();

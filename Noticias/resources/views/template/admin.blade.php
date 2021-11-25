@@ -81,7 +81,7 @@
 								<h6>Tabela</h6>
 							</div>
 							<div class="card-body pt-0 pb-2">
-								<div class="table-responsive pt-0">
+								<div class="table-responsive p-0">
 									@yield("tabela")
 								</div>
 							</div>
